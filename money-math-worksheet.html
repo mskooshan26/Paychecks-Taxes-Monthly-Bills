@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Money Math Practice</title>
+<style>
+  :root{
+    --paper:#FAF9F4;
+    --card:#FFFFFF;
+    --ink:#1C1E1A;
+    --muted:#6E6B5D;
+    --green:#1F5C3F;
+    --green-light:#E5EFE7;
+    --gold:#C98A1F;
+    --gold-light:#FBF0DA;
+    --rust:#A23B2E;
+    --rust-light:#F7E7E4;
+    --line:#DFDBCE;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Iowan Old Style','Palatino Linotype',Georgia,serif;
+    padding:2.5rem 1.25rem 5rem;
+  }
+  .wrap{max-width:720px;margin:0 auto;}
+
+  header{
+    border-bottom:2px solid var(--ink);
+    padding-bottom:1.25rem;
+    margin-bottom:1.75rem;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    flex-wrap:wrap;
+    gap:0.75rem;
+  }
+  header h1{
+    font-size:1.7rem;
+    font-weight:700;
+    margin:0 0 0.2rem;
+    letter-spacing:0.01em;
+  }
+  header p{
+    margin:0;
+    color:var(--muted);
+    font-size:0.95rem;
+    font-style:italic;
+  }
+  .name-line{
+    font-family:'Courier New',monospace;
+    font-size:0.85rem;
+    color:var(--muted);
+    display:flex;
+    gap:1.5rem;
+  }
+  .name-line input{
+    font-family:'Courier New',monospace;
+    border:none;
+    border-bottom:1px solid var(--muted);
+    background:transparent;
+    font-size:0.85rem;
+    width:130px;
+    color:var(--ink);
+    padding:2px 0;
+  }
+  .name-line input:focus{outline:none;border-bottom:1px solid var(--green);}
+
+  .tracker{
+    position:sticky;
+    top:0.75rem;
+    z-index:5;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:0.7rem 1.1rem;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:2rem;
+    box-shadow:0 2px 6px rgba(0,0,0,0.04);
+  }
+  .tracker .label{
+    font-family:'Courier New',monospace;
+    font-size:0.8rem;
+    color:var(--muted);
+    letter-spacing:0.03em;
+  }
+  .tracker .score{
+    font-family:'Courier New',monospace;
+    font-size:1.15rem;
+    font-weight:700;
+    color:var(--green);
+  }
+  .bar{
+    flex:1;
+    height:6px;
+    background:var(--line);
+    border-radius:3px;
+    margin:0 1rem;
+    overflow:hidden;
+  }
+  .bar-fill{
+    height:100%;
+    width:0%;
+    background:var(--green);
+    transition:width 0.4s ease;
+  }
+
+  .problem{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:1.5rem 1.6rem 1.4rem;
+    margin-bottom:1.6rem;
+  }
+  .problem-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    border-bottom:1px dashed var(--line);
+    padding-bottom:0.7rem;
+    margin-bottom:0.9rem;
+  }
+  .problem-head h2{
+    font-size:1.15rem;
+    margin:0;
+    font-weight:700;
+  }
+  .problem-head span{
+    font-family:'Courier New',monospace;
+    font-size:0.75rem;
+    color:var(--muted);
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+  }
+  .scenario{
+    font-size:0.98rem;
+    color:var(--ink);
+    margin-bottom:1.1rem;
+    line-height:1.55;
+  }
+  .scenario b{color:var(--green);}
+
+  .q{
+    margin-bottom:0.9rem;
+  }
+  .q label{
+    display:block;
+    font-size:0.93rem;
+    margin-bottom:0.4rem;
+    line-height:1.4;
+  }
+  .q .row{
+    display:flex;
+    align-items:center;
+    gap:0.5rem;
+    flex-wrap:wrap;
+  }
+  .q .row span.prefix{
+    font-family:'Courier New',monospace;
+    color:var(--muted);
+  }
+  .q input[type=text]{
+    font-family:'Courier New',monospace;
+    font-size:0.95rem;
+    padding:0.4rem 0.6rem;
+    border:1px solid var(--line);
+    border-radius:6px;
+    width:130px;
+    background:var(--paper);
+    color:var(--ink);
+  }
+  .q input[type=text]:focus{
+    outline:none;
+    border-color:var(--green);
+    background:#fff;
+  }
+  .feedback{
+    font-family:'Courier New',monospace;
+    font-size:0.85rem;
+    margin-top:0.3rem;
+    min-height:1.2em;
+  }
+  .feedback.correct{color:var(--green);}
+  .feedback.incorrect{color:var(--rust);}
+
+  .check-btn{
+    margin-top:0.6rem;
+    background:var(--green-light);
+    color:var(--green);
+    border:1px solid var(--green);
+    padding:0.5rem 1.1rem;
+    border-radius:7px;
+    font-family:'Courier New',monospace;
+    font-size:0.85rem;
+    font-weight:700;
+    cursor:pointer;
+    letter-spacing:0.03em;
+  }
+  .check-btn:hover{background:var(--green);color:#fff;}
+  .check-btn:active{transform:scale(0.98);}
+
+  .hint-toggle{
+    background:none;
+    border:none;
+    color:var(--gold);
+    font-family:'Courier New',monospace;
+    font-size:0.78rem;
+    cursor:pointer;
+    padding:0;
+    margin-left:0.75rem;
+    text-decoration:underline;
+  }
+  .hint{
+    display:none;
+    background:var(--gold-light);
+    border:1px solid var(--gold);
+    color:#7a5510;
+    font-size:0.85rem;
+    padding:0.5rem 0.75rem;
+    border-radius:6px;
+    margin-top:0.5rem;
+    font-family:'Courier New',monospace;
+  }
+  .hint.show{display:block;}
+
+  footer{
+    text-align:center;
+    color:var(--muted);
+    font-size:0.85rem;
+    font-style:italic;
+    margin-top:2rem;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <h1>Money math practice</h1>
+      <p>Paychecks, taxes, and monthly bills</p>
+    </div>
+    <div class="name-line">
+      <span>Name: <input type="text" placeholder=""></span>
+      <span>Date: <input type="text" placeholder=""></span>
+    </div>
+  </header>
+
+  <div class="tracker">
+    <span class="label">PROGRESS</span>
+    <div class="bar"><div class="bar-fill" id="barFill"></div></div>
+    <span class="score"><span id="scoreNum">0</span>/12 correct</span>
+  </div>
+
+  <!-- Problem 1 -->
+  <div class="problem" data-total="3">
+    <div class="problem-head">
+      <h2>1. Paycheck</h2>
+      <span>Wages &amp; taxes</span>
+    </div>
+    <div class="scenario">You work <b>22 hours</b> at <b>$14/hour</b>.</div>
+
+    <div class="q">
+      <label>a) What is your total (gross) pay?</label>
+      <div class="row"><span class="prefix">$</span>
+        <input type="text" id="p1a" inputmode="decimal">
+        <button class="check-btn" onclick="check('p1a',308,this)">Check</button>
+      </div>
+      <div class="feedback" id="fb-p1a"></div>
+    </div>
+
+    <div class="q">
+      <label>b) Taxes take 12% of your total pay. How much do you pay in taxes?</label>
+      <div class="row"><span class="prefix">$</span>
+        <input type="text" id="p1b" inputmode="decimal">
+        <button class="check-btn" onclick="check('p1b',36.96,this)">Check</button>
+      </div>
+      <div class="feedback" id="fb-p1b"></div>
+    </div>
+
+    <div class="q">
+      <label>c) What is your take-home pay?</label>
+      <div class="row"><span class="prefix">$</span>
+        <input type="text" id="p1c" inputmode="decimal">
+        <button class="check-btn" onclick="check('p1c',271.04,this)">Check</button>
+      </div>
+      <div class="feedback" id="fb-p1c"></div>
+      <button class="hint-toggle" onclick="toggleHint('h1')">show hint</button>
+      <div class="hint" id="h1">Gross pay = hours &times; hourly rate. Taxes = gross pay &times; tax rate. Take-home = gross pay &minus; taxes.</div>
+    </div>
+  </div>
+
+  <!-- Problem 2 -->
+  <div class="problem" data-total="4">
+    <div class="problem-head">
+      <h2>2. Paycheck</h2>
+      <span>Wages, taxes &amp; savings</span>
+    </div>
+    <div class="scenario">You work <b>30 hours</b> at <b>$16.50/hour</b>.</div>
+
+    <div class="q">
+      <label>a) What is your total (gross) pay?</label>
+      <div class="row"><span class="prefix">$</span>
+        <input type="text" id="p2a" inputmode="decimal">
+        <button class="check-btn" onclick="check('p2a',495,this)">Check</button>
+      </div>
+      <div class="feedback" id="fb-p2a"></div>
+    </div>
+
+    <div class="q">
+      <label>b) Taxes take 18% of your total pay. How much do you pay in taxes?</label>
+      <div class="row"><span class="prefix">$</span>
+        <input type="text" id="p2b" inputmode="decimal">
+        <button class="check-btn" onclick="check('p2b',89.10,this)">Check</button>
+      </div>
+      <div class="feedback" id="fb-p2b"></div>
+    </div>
+
+    <div class="q">
+      <label>c) What is your take-home pay?</label>
+      <div class="row"><span class="prefix">$</span>
+        <input type="text" id="p2c" inputmode="decimal">
+        <button class="check-btn" onclick="check('p2c',405.90,this)">Check</button>
+      </div>
+      <div class="feedback" id="fb-p2c"></div>
+    </div>
+
+    <div class="q">
+      <label>d) If you save 10% of your take-home pay, how much is that?</label>
+      <div class="row"><span class="prefix">$</span>
+        <input type="text" id="p2d" inputmode="decimal">
+        <button class="check-btn" onclick="check('p2d',40.59,this)">Check</button>
+      </div>
+      <div class="feedback" id="fb-p2d"></div>
+    </div>
+  </div>
+
+  <!-- Problem 3 -->
+  <div class="problem" data-total="2">
+    <div class="problem-head">
+      <h2>3. Streaming subscriptions</h2>
+      <span>Monthly &rarr; annual</span>
+    </div>
+    <div class="scenario">A streaming service costs <b>$12/month</b>. You also subscribe to a music service for <b>$9.99/month</b>.</div>
+
+    <div class="q">
+      <label>a) What is the annual cost of the streaming service alone?</label>
+      <div class="row"><span class="prefix">$</span>
+        <input type="text" id="p3a" inputmode="decimal">
+        <button class="check-btn" onclick="check('p3a',144,this)">Check</button>
+      </div>
+      <div class="feedback" id="fb-p3a"></div>
+    </div>
+
+    <div class="q">
+      <label>b) What is the combined annual cost of both subscriptions?</label>
+      <div class="row"><span class="prefix">$</span>
+        <input type="text" id="p3b" inputmode="decimal">
+        <button class="check-btn" onclick="check('p3b',263.88,this)">Check</button>
+      </div>
+      <div class="feedback" id="fb-p3b"></div>
+      <button class="hint-toggle" onclick="toggleHint('h3')">show hint</button>
+      <div class="hint" id="h3">Find each annual cost separately (monthly &times; 12), then add them together.</div>
+    </div>
+  </div>
+
+  <!-- Problem 4 -->
+  <div class="problem" data-total="2">
+    <div class="problem-head">
+      <h2>4. Gym membership</h2>
+      <span>Recurring cost + fee</span>
+    </div>
+    <div class="scenario">A gym membership costs <b>$45/month</b>, plus a one-time <b>$30 sign-up fee</b>.</div>
+
+    <div class="q">
+      <label>a) What is the cost for the first year, including the sign-up fee?</label>
+      <div class="row"><span class="prefix">$</span>
+        <input type="text" id="p4a" inputmode="decimal">
+        <button class="check-btn" onclick="check('p4a',570,this)">Check</button>
+      </div>
+      <div class="feedback" id="fb-p4a"></div>
+    </div>
+
+    <div class="q">
+      <label>b) What is the cost for just the second year (no sign-up fee)?</label>
+      <div class="row"><span class="prefix">$</span>
+        <input type="text" id="p4b" inputmode="decimal">
+        <button class="check-btn" onclick="check('p4b',540,this)">Check</button>
+      </div>
+      <div class="feedback" id="fb-p4b"></div>
+    </div>
+  </div>
+
+  <!-- Problem 5 -->
+  <div class="problem" data-total="1">
+    <div class="problem-head">
+      <h2>5. Car insurance</h2>
+      <span>Discount for paying up front</span>
+    </div>
+    <div class="scenario">Car insurance costs <b>$110/month</b>. The annual cost is <b>$1,320</b>. If you pay for the full year up front, the company gives you a <b>5% discount</b>.</div>
+
+    <div class="q">
+      <label>How much would you pay for the year with the discount?</label>
+      <div class="row"><span class="prefix">$</span>
+        <input type="text" id="p5a" inputmode="decimal">
+        <button class="check-btn" onclick="check('p5a',1254,this)">Check</button>
+      </div>
+      <div class="feedback" id="fb-p5a"></div>
+      <button class="hint-toggle" onclick="toggleHint('h5')">show hint</button>
+      <div class="hint" id="h5">A 5% discount means you pay 95% of the original price.</div>
+    </div>
+  </div>
+
+  <footer>Enter a number, then press Check. You can try again as many times as you need.</footer>
+</div>
+
+<script>
+  var correctIds = {};
+  var TOTAL = 12;
+
+  function toggleHint(id){
+    document.getElementById(id).classList.toggle('show');
+  }
+
+  function check(id, answer, btn){
+    var input = document.getElementById(id);
+    var fb = document.getElementById('fb-' + id);
+    var raw = input.value.trim().replace(/[$,]/g,'');
+    var val = parseFloat(raw);
+
+    if(raw === '' || isNaN(val)){
+      fb.textContent = 'Enter a number first.';
+      fb.className = 'feedback incorrect';
+      return;
+    }
+
+    if(Math.abs(val - answer) < 0.02){
+      fb.textContent = 'Correct!';
+      fb.className = 'feedback correct';
+      correctIds[id] = true;
+    } else {
+      fb.textContent = 'Not quite — try again.';
+      fb.className = 'feedback incorrect';
+      correctIds[id] = false;
+    }
+    updateTracker();
+  }
+
+  function updateTracker(){
+    var count = 0;
+    for(var k in correctIds){ if(correctIds[k]) count++; }
+    document.getElementById('scoreNum').textContent = count;
+    document.getElementById('barFill').style.width = (count / TOTAL * 100) + '%';
+  }
+</script>
+</body>
+</html>
